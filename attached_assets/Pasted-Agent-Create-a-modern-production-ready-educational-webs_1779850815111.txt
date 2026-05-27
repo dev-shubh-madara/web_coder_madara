@@ -1,0 +1,238 @@
+Agent
+Create a modern, production-ready educational website named “JEE Test Mock Free” for students preparing for the JEE Main exam. The website should provide a complete real-exam mock test experience with a professional UI similar to official JEE Main CBT platforms.
+
+Core Requirements
+
+Build the website with a clean, fast, responsive, and mobile-friendly interface using modern web technologies. The design should feel premium, distraction-free, and student-focused.
+
+Main Features
+
+Homepage
+Attractive hero section with motivational headline.
+
+Buttons: “Start Free Mock Test”, “Login”, “View Tests”.
+
+Show stats like total questions, students participated, accuracy tracking.
+
+Include testimonials and feature cards.
+
+Dark/light modern UI with blue-white educational theme.
+
+Authentication System
+Phone number login with OTP verification.
+
+User enters mobile number → receives OTP → verifies → account created/login successful.
+
+Use secure authentication flow.
+
+Save user profile, test history, scores, and rankings.
+
+Dashboard
+User profile section.
+
+List of available mock tests:
+
+Full JEE Main Mock Test
+
+Physics Test
+
+Chemistry Test
+
+Mathematics Test
+
+Show:
+
+Attempted tests
+
+Scores
+
+Percentile
+
+Time spent
+
+Rank prediction
+
+Real JEE Main Test Interface Create a highly realistic exam environment similar to the official JEE Main CBT exam:
+Left side: question panel.
+
+Right side: question navigation palette.
+
+Top: timer and test information.
+
+Sections:
+
+Physics
+
+Chemistry
+
+Mathematics
+
+Question types:
+
+MCQ
+
+Numerical value questions
+
+Features:
+
+Mark for review
+
+Save & Next
+
+Previous/Next navigation
+
+Question color indicators
+
+Calculator popup
+
+Language switch (English/Hindi)
+
+Auto-save answers
+
+Countdown timer
+
+Full-screen mode mandatory
+
+Fullscreen Security System
+When the user starts the test, automatically enable fullscreen mode.
+
+If the user exits fullscreen:
+
+Show warning once.
+
+On second fullscreen exit automatically submit the test.
+
+Prevent:
+
+Copy/paste
+
+Right click
+
+Tab switching detection
+
+Developer tools shortcuts
+
+Show security warnings professionally.
+
+Automatic Test Submission
+Auto-submit when:
+
+Timer ends
+
+User exits fullscreen multiple times
+
+Browser/tab becomes inactive repeatedly
+
+Save all answers before submission.
+
+Results & Analytics
+Detailed result page with:
+
+Total score
+
+Accuracy percentage
+
+Correct/incorrect/unattempted count
+
+Subject-wise analysis
+
+Percentile prediction
+
+AIR estimation
+
+Time analysis
+
+Graphs and charts for performance tracking.
+
+Admin Panel Build an admin dashboard where admin can:
+Add/edit/delete tests
+
+Upload questions
+
+Manage students
+
+View analytics
+
+Send announcements
+
+Monitor live tests
+
+Backend Requirements
+Use scalable backend architecture.
+
+Database for users, tests, questions, responses, rankings.
+
+Secure API authentication.
+
+Cloud-ready deployment structure.
+
+Recommended Tech Stack
+Frontend: React / Next.js + Tailwind CSS
+
+Backend: Node.js + Express
+
+Database: MongoDB or PostgreSQL
+
+Authentication: Firebase OTP or Twilio OTP
+
+Hosting: Vercel + Render/AWS
+
+Real-time timer synchronization
+
+Extra Premium Features
+AI-based performance insights
+
+Daily challenge tests
+
+Leaderboard system
+
+Adaptive difficulty
+
+Bookmark difficult questions
+
+Resume interrupted tests
+
+PDF solution download
+
+Discussion section for questions
+
+UI/UX Expectations
+Smooth animations
+
+Professional typography
+
+Exam-focused minimal design
+
+Responsive across desktop/tablet/mobile
+
+Fast loading speed
+
+Accessibility optimized
+
+SEO & Branding
+Website title: “JEE Test Mock Free”
+
+Add SEO optimized pages.
+
+Include favicon, logo, and branding assets.
+
+Educational and trustworthy feel.
+
+Output Needed Generate:
+Complete frontend UI
+
+Backend APIs
+
+Database schema
+
+Authentication flow
+
+Mock test engine
+
+Admin panel
+
+Deployment instructions
+
+Clean, modular, scalable code structure
+
+The final website should look and behave like a professional national-level online examination platform with secure fullscreen monitoring and a smooth real JEE Main exam experience.

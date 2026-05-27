@@ -1,22 +1,35 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: JEE Test Mock Free API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: tests
+    description: Test management
+  - name: questions
+    description: Question management
+  - name: sessions
+    description: Test session operations
+  - name: dashboard
+    description: User dashboard
+  - name: admin
+    description: Admin operations
+  - name: leaderboard
+    description: Leaderboard & rankings
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +37,484 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/send-otp:
+    post:
+      operationId: sendOtp
+      tags: [auth]
+      summary: Send OTP to phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendOtpInput"
+      responses:
+        "200":
+          description: OTP sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpResponse"
+
+  /auth/verify-otp:
+    post:
+      operationId: verifyOtp
+      tags: [auth]
+      summary: Verify OTP and login or register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOtpInput"
+      responses:
+        "200":
+          description: Auth successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current user
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  /tests:
+    get:
+      operationId: listTests
+      tags: [tests]
+      summary: List all available tests
+      parameters:
+        - in: query
+          name: subject
+          schema:
+            type: string
+          description: Filter by subject
+        - in: query
+          name: type
+          schema:
+            type: string
+          description: Filter by type (full/subject)
+      responses:
+        "200":
+          description: List of tests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Test"
+    post:
+      operationId: createTest
+      tags: [tests]
+      summary: Create a new test (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Test"
+
+  /tests/{testId}:
+    get:
+      operationId: getTest
+      tags: [tests]
+      summary: Get test details
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Test details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestWithQuestions"
+    put:
+      operationId: updateTest
+      tags: [tests]
+      summary: Update a test (admin)
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TestUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Test"
+    delete:
+      operationId: deleteTest
+      tags: [tests]
+      summary: Delete a test (admin)
+      parameters:
+        - in: path
+          name: testId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /questions:
+    post:
+      operationId: createQuestion
+      tags: [questions]
+      summary: Create a new question (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+
+  /questions/{questionId}:
+    put:
+      operationId: updateQuestion
+      tags: [questions]
+      summary: Update a question (admin)
+      parameters:
+        - in: path
+          name: questionId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Question"
+    delete:
+      operationId: deleteQuestion
+      tags: [questions]
+      summary: Delete a question (admin)
+      parameters:
+        - in: path
+          name: questionId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /sessions:
+    post:
+      operationId: startSession
+      tags: [sessions]
+      summary: Start a new test session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartSessionInput"
+      responses:
+        "201":
+          description: Session started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List current user's test sessions
+      responses:
+        "200":
+          description: Sessions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SessionSummary"
+
+  /sessions/{sessionId}:
+    get:
+      operationId: getSession
+      tags: [sessions]
+      summary: Get session details with questions
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionWithQuestions"
+
+  /sessions/{sessionId}/answers:
+    patch:
+      operationId: saveAnswers
+      tags: [sessions]
+      summary: Save answers (auto-save during test)
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnswerInput"
+      responses:
+        "200":
+          description: Answers saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /sessions/{sessionId}/submit:
+    post:
+      operationId: submitSession
+      tags: [sessions]
+      summary: Submit test session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Submitted and scored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+  /sessions/{sessionId}/result:
+    get:
+      operationId: getResult
+      tags: [sessions]
+      summary: Get result for a completed session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Detailed result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Result"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get user dashboard stats
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/attempts:
+    get:
+      operationId: getAttempts
+      tags: [dashboard]
+      summary: Get user's recent test attempts
+      responses:
+        "200":
+          description: Recent attempts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttemptSummary"
+
+  /dashboard/performance:
+    get:
+      operationId: getPerformanceTrend
+      tags: [dashboard]
+      summary: Get subject-wise performance breakdown
+      responses:
+        "200":
+          description: Performance data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceTrend"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get top student rankings
+      parameters:
+        - in: query
+          name: testId
+          schema:
+            type: integer
+          description: Filter by specific test
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of entries to return
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /platform/stats:
+    get:
+      operationId: getPlatformStats
+      tags: [dashboard]
+      summary: Get public platform statistics (homepage)
+      responses:
+        "200":
+          description: Platform stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformStats"
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard overview stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/users:
+    get:
+      operationId: listUsers
+      tags: [admin]
+      summary: List all users (admin)
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+
+  /admin/announcements:
+    post:
+      operationId: createAnnouncement
+      tags: [admin]
+      summary: Send announcement to all users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnouncementInput"
+      responses:
+        "201":
+          description: Announcement sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +522,645 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    SendOtpInput:
+      type: object
+      required: [phone]
+      properties:
+        phone:
+          type: string
+
+    OtpResponse:
+      type: object
+      required: [message, otpId]
+      properties:
+        message:
+          type: string
+        otpId:
+          type: string
+
+    VerifyOtpInput:
+      type: object
+      required: [phone, otp]
+      properties:
+        phone:
+          type: string
+        otp:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, phone, name, role, createdAt]
+      properties:
+        id:
+          type: integer
+        phone:
+          type: string
+        name:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [student, admin]
+        rank:
+          type: ["integer", "null"]
+        totalAttempts:
+          type: ["integer", "null"]
+        avgScore:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+
+    Test:
+      type: object
+      required: [id, title, subject, type, totalQuestions, duration, maxMarks, status, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subject:
+          type: string
+        type:
+          type: string
+          enum: [full, physics, chemistry, mathematics]
+        totalQuestions:
+          type: integer
+        duration:
+          type: integer
+          description: Duration in minutes
+        maxMarks:
+          type: integer
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published, archived]
+        attemptCount:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    TestInput:
+      type: object
+      required: [title, subject, type, duration, maxMarks]
+      properties:
+        title:
+          type: string
+        subject:
+          type: string
+        type:
+          type: string
+          enum: [full, physics, chemistry, mathematics]
+        duration:
+          type: integer
+        maxMarks:
+          type: integer
+        description:
+          type: string
+        status:
+          type: string
+          enum: [draft, published, archived]
+
+    TestUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [draft, published, archived]
+        duration:
+          type: integer
+
+    TestWithQuestions:
+      type: object
+      required: [id, title, subject, type, totalQuestions, duration, maxMarks, status, questions, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subject:
+          type: string
+        type:
+          type: string
+        totalQuestions:
+          type: integer
+        duration:
+          type: integer
+        maxMarks:
+          type: integer
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Question"
+        createdAt:
+          type: string
+
+    Question:
+      type: object
+      required: [id, testId, subject, questionText, questionType, marks, negativeMarks, orderIndex]
+      properties:
+        id:
+          type: integer
+        testId:
+          type: integer
+        subject:
+          type: string
+          enum: [physics, chemistry, mathematics]
+        questionText:
+          type: string
+        questionType:
+          type: string
+          enum: [mcq, numerical]
+        optionA:
+          type: ["string", "null"]
+        optionB:
+          type: ["string", "null"]
+        optionC:
+          type: ["string", "null"]
+        optionD:
+          type: ["string", "null"]
+        correctOption:
+          type: ["string", "null"]
+          description: A, B, C, or D for MCQ
+        correctNumerical:
+          type: ["number", "null"]
+          description: Correct value for numerical questions
+        marks:
+          type: integer
+        negativeMarks:
+          type: number
+        orderIndex:
+          type: integer
+        solution:
+          type: ["string", "null"]
+
+    QuestionInput:
+      type: object
+      required: [testId, subject, questionText, questionType, marks, negativeMarks, orderIndex]
+      properties:
+        testId:
+          type: integer
+        subject:
+          type: string
+          enum: [physics, chemistry, mathematics]
+        questionText:
+          type: string
+        questionType:
+          type: string
+          enum: [mcq, numerical]
+        optionA:
+          type: string
+        optionB:
+          type: string
+        optionC:
+          type: string
+        optionD:
+          type: string
+        correctOption:
+          type: string
+        correctNumerical:
+          type: number
+        marks:
+          type: integer
+        negativeMarks:
+          type: number
+        orderIndex:
+          type: integer
+        solution:
+          type: string
+
+    QuestionUpdate:
+      type: object
+      properties:
+        questionText:
+          type: string
+        optionA:
+          type: string
+        optionB:
+          type: string
+        optionC:
+          type: string
+        optionD:
+          type: string
+        correctOption:
+          type: string
+        correctNumerical:
+          type: number
+        solution:
+          type: string
+
+    StartSessionInput:
+      type: object
+      required: [testId]
+      properties:
+        testId:
+          type: integer
+
+    Session:
+      type: object
+      required: [id, testId, userId, status, startedAt, timeLimit]
+      properties:
+        id:
+          type: integer
+        testId:
+          type: integer
+        userId:
+          type: integer
+        status:
+          type: string
+          enum: [active, submitted, auto_submitted]
+        startedAt:
+          type: string
+        submittedAt:
+          type: ["string", "null"]
+        timeLimit:
+          type: integer
+          description: Remaining seconds
+
+    SessionSummary:
+      type: object
+      required: [id, testId, testTitle, status, startedAt, score, totalMarks]
+      properties:
+        id:
+          type: integer
+        testId:
+          type: integer
+        testTitle:
+          type: string
+        status:
+          type: string
+        startedAt:
+          type: string
+        submittedAt:
+          type: ["string", "null"]
+        score:
+          type: ["number", "null"]
+        totalMarks:
+          type: ["integer", "null"]
+        percentile:
+          type: ["number", "null"]
+
+    SessionWithQuestions:
+      type: object
+      required: [id, testId, userId, status, startedAt, timeLimit, questions, answers]
+      properties:
+        id:
+          type: integer
+        testId:
+          type: integer
+        userId:
+          type: integer
+        status:
+          type: string
+        startedAt:
+          type: string
+        submittedAt:
+          type: ["string", "null"]
+        timeLimit:
+          type: integer
+        questions:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionForSession"
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/SavedAnswer"
+
+    QuestionForSession:
+      type: object
+      required: [id, subject, questionText, questionType, marks, negativeMarks, orderIndex]
+      properties:
+        id:
+          type: integer
+        subject:
+          type: string
+        questionText:
+          type: string
+        questionType:
+          type: string
+        optionA:
+          type: ["string", "null"]
+        optionB:
+          type: ["string", "null"]
+        optionC:
+          type: ["string", "null"]
+        optionD:
+          type: ["string", "null"]
+        marks:
+          type: integer
+        negativeMarks:
+          type: number
+        orderIndex:
+          type: integer
+
+    SavedAnswer:
+      type: object
+      required: [questionId, status]
+      properties:
+        questionId:
+          type: integer
+        selectedOption:
+          type: ["string", "null"]
+        numericalAnswer:
+          type: ["number", "null"]
+        status:
+          type: string
+          enum: [unattempted, attempted, marked_for_review, attempted_marked]
+        markedForReview:
+          type: boolean
+
+    AnswerInput:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/SingleAnswer"
+
+    SingleAnswer:
+      type: object
+      required: [questionId, status]
+      properties:
+        questionId:
+          type: integer
+        selectedOption:
+          type: ["string", "null"]
+        numericalAnswer:
+          type: ["number", "null"]
+        status:
+          type: string
+          enum: [unattempted, attempted, marked_for_review, attempted_marked]
+        markedForReview:
+          type: boolean
+
+    Result:
+      type: object
+      required: [sessionId, testTitle, totalScore, maxMarks, correct, incorrect, unattempted, accuracy, timeTaken, subjectResults, percentile, rank]
+      properties:
+        sessionId:
+          type: integer
+        testTitle:
+          type: string
+        totalScore:
+          type: number
+        maxMarks:
+          type: integer
+        correct:
+          type: integer
+        incorrect:
+          type: integer
+        unattempted:
+          type: integer
+        accuracy:
+          type: number
+        timeTaken:
+          type: integer
+          description: Time taken in seconds
+        subjectResults:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubjectResult"
+        percentile:
+          type: number
+        rank:
+          type: integer
+        questionResults:
+          type: array
+          items:
+            $ref: "#/components/schemas/QuestionResult"
+
+    SubjectResult:
+      type: object
+      required: [subject, score, maxScore, correct, incorrect, unattempted, accuracy]
+      properties:
+        subject:
+          type: string
+        score:
+          type: number
+        maxScore:
+          type: integer
+        correct:
+          type: integer
+        incorrect:
+          type: integer
+        unattempted:
+          type: integer
+        accuracy:
+          type: number
+
+    QuestionResult:
+      type: object
+      required: [questionId, subject, questionText, questionType, isCorrect, marksAwarded]
+      properties:
+        questionId:
+          type: integer
+        subject:
+          type: string
+        questionText:
+          type: string
+        questionType:
+          type: string
+        selectedOption:
+          type: ["string", "null"]
+        correctOption:
+          type: ["string", "null"]
+        numericalAnswer:
+          type: ["number", "null"]
+        correctNumerical:
+          type: ["number", "null"]
+        isCorrect:
+          type: boolean
+        marksAwarded:
+          type: number
+        solution:
+          type: ["string", "null"]
+
+    DashboardStats:
+      type: object
+      required: [totalAttempts, avgScore, avgAccuracy, rank, totalStudents, bestScore, bestPercentile]
+      properties:
+        totalAttempts:
+          type: integer
+        avgScore:
+          type: number
+        avgAccuracy:
+          type: number
+        rank:
+          type: integer
+        totalStudents:
+          type: integer
+        bestScore:
+          type: number
+        bestPercentile:
+          type: number
+        lastAttemptDate:
+          type: ["string", "null"]
+
+    AttemptSummary:
+      type: object
+      required: [id, testTitle, testType, score, maxMarks, percentile, accuracy, date, timeTaken]
+      properties:
+        id:
+          type: integer
+        testTitle:
+          type: string
+        testType:
+          type: string
+        score:
+          type: number
+        maxMarks:
+          type: integer
+        percentile:
+          type: number
+        accuracy:
+          type: number
+        date:
+          type: string
+        timeTaken:
+          type: integer
+        rank:
+          type: integer
+
+    PerformanceTrend:
+      type: object
+      required: [physics, chemistry, mathematics, overall]
+      properties:
+        physics:
+          $ref: "#/components/schemas/SubjectPerformance"
+        chemistry:
+          $ref: "#/components/schemas/SubjectPerformance"
+        mathematics:
+          $ref: "#/components/schemas/SubjectPerformance"
+        overall:
+          type: array
+          items:
+            $ref: "#/components/schemas/ScoreTrend"
+
+    SubjectPerformance:
+      type: object
+      required: [avgScore, avgAccuracy, attempts, trend]
+      properties:
+        avgScore:
+          type: number
+        avgAccuracy:
+          type: number
+        attempts:
+          type: integer
+        trend:
+          type: string
+          enum: [improving, declining, stable]
+
+    ScoreTrend:
+      type: object
+      required: [date, score, percentile]
+      properties:
+        date:
+          type: string
+        score:
+          type: number
+        percentile:
+          type: number
+
+    LeaderboardEntry:
+      type: object
+      required: [rank, userId, name, phone, score, percentile, accuracy, timeTaken]
+      properties:
+        rank:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: ["string", "null"]
+        phone:
+          type: string
+        score:
+          type: number
+        percentile:
+          type: number
+        accuracy:
+          type: number
+        timeTaken:
+          type: integer
+
+    PlatformStats:
+      type: object
+      required: [totalStudents, totalTests, totalQuestions, testsAttempted]
+      properties:
+        totalStudents:
+          type: integer
+        totalTests:
+          type: integer
+        totalQuestions:
+          type: integer
+        testsAttempted:
+          type: integer
+
+    AdminStats:
+      type: object
+      required: [totalUsers, totalTests, totalSessions, activeSessions, avgScore, topScore]
+      properties:
+        totalUsers:
+          type: integer
+        totalTests:
+          type: integer
+        totalSessions:
+          type: integer
+        activeSessions:
+          type: integer
+        avgScore:
+          type: number
+        topScore:
+          type: number
+        recentSignups:
+          type: integer
+
+    UserListResponse:
+      type: object
+      required: [users, total, page]
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+        total:
+          type: integer
+        page:
+          type: integer
+
+    AnnouncementInput:
+      type: object
+      required: [title, message]
+      properties:
+        title:
+          type: string
+        message:
+          type: string

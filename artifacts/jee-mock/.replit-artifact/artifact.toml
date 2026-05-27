@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "JEE Test Mock Free"
+version = "1.0.0"
+id = "artifacts/jee-mock"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23231
+
+[services.development]
+run = "pnpm --filter @workspace/jee-mock run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jee-mock", "run", "build" ]
+publicDir = "artifacts/jee-mock/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23231"
+BASE_PATH = "/"
