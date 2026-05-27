@@ -99,6 +99,7 @@ router.get("/:sessionId", requireAuth, async (req: AuthRequest, res, next) => {
       status: session.status,
       startedAt: session.startedAt.toISOString(),
       submittedAt: session.submittedAt?.toISOString() ?? null,
+      testName: test?.title ?? "JEE Main Mock",
       timeLimit,
       questions: questions.map(q => ({
         id: q.id,

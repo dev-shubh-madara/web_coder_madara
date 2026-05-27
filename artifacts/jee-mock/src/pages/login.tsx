@@ -22,6 +22,7 @@ const otpSchema = z.object({
 export default function Login() {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
+  const [devOtp, setDevOtp] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { login } = useAuth();
 
@@ -43,7 +44,8 @@ export default function Login() {
     sendOtpMutation.mutate(
       { data: { phone: data.phone } },
       {
-        onSuccess: () => {
+        onSuccess: (res: any) => {
+          if (res.otp) setDevOtp(res.otp);
           setStep("otp");
         },
       }
@@ -66,13 +68,16 @@ export default function Login() {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
+          <div className="mx-auto mb-4 w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
+            <span className="text-white font-bold text-2xl">J</span>
+          </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
-            {step === "phone" ? "Welcome Back" : "Verify OTP"}
+            {step === "phone" ? "Welcome to JEE Mock" : "Verify OTP"}
           </CardTitle>
           <CardDescription>
-            {step === "phone" 
-              ? "Enter your phone number to continue" 
-              : `Enter the 6-digit code sent to ${phone}`}
+            {step === "phone"
+              ? "Enter your phone number to continue"
+              : `Enter the 6-digit code sent to +91 ${phone}`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -86,29 +91,61 @@ export default function Login() {
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter 10 digit number" {...field} />
+                        <div className="flex">
+                          <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-sm">
+                            +91
+                          </span>
+                          <Input
+                            className="rounded-l-none"
+                            placeholder="10-digit mobile number"
+                            maxLength={10}
+                            {...field}
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={sendOtpMutation.isPending}
                 >
-                  {sendOtpMutation.isPending ? "Sending..." : "Continue"}
+                  {sendOtpMutation.isPending ? "Sending OTP..." : "Send OTP"}
                 </Button>
               </form>
             </Form>
           ) : (
             <Form {...otpForm}>
               <form onSubmit={otpForm.handleSubmit(onOtpSubmit)} className="space-y-6">
+                {devOtp && (
+                  <div className="rounded-lg border-2 border-dashed border-amber-400 bg-amber-50 p-4 text-center">
+                    <p className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-1">
+                      Dev Mode — Your OTP
+                    </p>
+                    <p className="text-3xl font-mono font-bold tracking-widest text-amber-900">
+                      {devOtp}
+                    </p>
+                    <p className="text-xs text-amber-600 mt-1">
+                      (In production this is sent via SMS)
+                    </p>
+                    <button
+                      type="button"
+                      className="mt-2 text-xs text-blue-600 underline"
+                      onClick={() => otpForm.setValue("otp", devOtp)}
+                    >
+                      Click to auto-fill
+                    </button>
+                  </div>
+                )}
+
                 <FormField
                   control={otpForm.control}
                   name="otp"
                   render={({ field }) => (
                     <FormItem className="flex flex-col items-center">
+                      <FormLabel className="mb-2">Enter 6-digit OTP</FormLabel>
                       <FormControl>
                         <InputOTP maxLength={6} {...field}>
                           <InputOTPGroup>
@@ -125,8 +162,8 @@ export default function Login() {
                     </FormItem>
                   )}
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={verifyOtpMutation.isPending}
                 >
@@ -136,9 +173,9 @@ export default function Login() {
                   type="button"
                   variant="ghost"
                   className="w-full"
-                  onClick={() => setStep("phone")}
+                  onClick={() => { setStep("phone"); setDevOtp(null); }}
                 >
-                  Back
+                  ← Back
                 </Button>
               </form>
             </Form>

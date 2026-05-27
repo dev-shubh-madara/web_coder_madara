@@ -6,7 +6,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const [location] = useLocation();
 
-  // Don't show navbar in exam mode
   if (location.startsWith("/test/")) {
     return <>{children}</>;
   }
@@ -33,6 +32,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 Leaderboard
               </span>
             </Link>
+            {user && (
+              <Link href="/insights">
+                <span className={`text-sm font-medium transition-colors hover:text-primary ${location === "/insights" ? "text-primary" : "text-muted-foreground"}`}>
+                  AI Insights
+                </span>
+              </Link>
+            )}
             {user?.role === "admin" && (
               <Link href="/admin">
                 <span className={`text-sm font-medium transition-colors hover:text-primary ${location === "/admin" ? "text-primary" : "text-muted-foreground"}`}>
@@ -58,14 +64,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      
+
       <main className="flex-1 bg-gray-50/50">
         {children}
       </main>
 
-      <footer className="border-t bg-white py-8">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>JEE Mock Free Platform. Not affiliated with NTA.</p>
+      <footer className="border-t bg-white py-6">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
+            <span>Developed by <span className="font-semibold text-foreground">GMS</span></span>
+            <span className="text-xs text-gray-400">JEE Mock Free — Not affiliated with NTA</span>
+            <span>Made with <span className="text-red-500">♥</span> by <span className="font-semibold text-foreground">Shubh</span></span>
+          </div>
         </div>
       </footer>
     </div>

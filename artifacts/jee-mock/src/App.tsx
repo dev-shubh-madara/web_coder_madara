@@ -15,6 +15,7 @@ import Exam from "@/pages/exam";
 import Result from "@/pages/result";
 import Leaderboard from "@/pages/leaderboard";
 import Admin from "@/pages/admin";
+import Insights from "@/pages/insights";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,10 @@ function Router() {
           <ProtectedRoute><Result /></ProtectedRoute>
         </Route>
         
+        <Route path="/insights">
+          <ProtectedRoute><Insights /></ProtectedRoute>
+        </Route>
+
         {/* Protected Admin Routes */}
         <Route path="/admin">
           <ProtectedRoute adminOnly><Admin /></ProtectedRoute>
