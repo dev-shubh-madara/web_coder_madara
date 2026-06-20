@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "buildCommand": "cd artifacts/jee-mock && npx vite build --config vite.config.ts",
+  "outputDirectory": "artifacts/jee-mock/dist/public",
+  "installCommand": "npm install -g pnpm && pnpm install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
