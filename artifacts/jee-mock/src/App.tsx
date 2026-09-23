@@ -15,6 +15,7 @@ import Exam from "@/pages/exam";
 import Result from "@/pages/result";
 import Leaderboard from "@/pages/leaderboard";
 import Admin from "@/pages/admin";
+import AdminLogin from "@/pages/admin-login";
 import Insights from "@/pages/insights";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/login" component={Login} />
+        <Route path="/admin-login" component={AdminLogin} />
         <Route path="/tests" component={Tests} />
         <Route path="/leaderboard" component={Leaderboard} />
         

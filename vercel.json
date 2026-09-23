@@ -4,7 +4,14 @@
   "outputDirectory": "artifacts/jee-mock/dist/public",
   "installCommand": "npm install -g pnpm && pnpm install",
   "framework": null,
+  "functions": {
+    "api/index.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
