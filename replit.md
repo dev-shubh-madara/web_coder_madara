@@ -57,6 +57,9 @@ A production-ready educational platform for JEE Main exam preparation, simulatin
 
 _Populate as you build — explicit user instructions worth remembering across sessions._
 
+## Advantage of my app
+- **Free of cost**: A test seriers which is free for every one just use and enjoy no need to wate money in this test series.
+- **Powered by madara** :- The aura it self madara(shubh)
 ## Gotchas
 
 - Run `pnpm run typecheck:libs` after adding new schema files to `lib/db/src/schema/` before typechecking the API server.
